@@ -1,9 +1,5 @@
 #!/bin/sh
 
-export GOROOT="/usr/local/go"
-export PATH=$GOROOT/bin:$PATH
-export GOPATH=/go
-
 
 export PROJECT_ROOT=`pwd`
 

@@ -4,9 +4,6 @@ FROM xianzixiang/go_builder as builder
 ARG PROJECT_NAME
 ARG PROJECT_PATH
 
-RUN echo ${PROJECT_NAME}-!-${PROJECT_PATH}
-
-ENV GOPATH=$PROJECT_PATH/gopath
 
 ADD . $PROJECT_PATH
 
