@@ -1,0 +1,40 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        PROJECT_NAME: "$PROJECT_NAME"
+        PROJECT_PATH: "$PROJECT_PATH"
+    depends_on:
+      - "mysql"
+    stdin_open: true
+    tty: true
+    container_name: "$PROJECT_NAME"
+    env_file:
+      - conf/app.env
+    ports:
+      - 8004:8004
+    entrypoint: ["/bin/bash", "-c",
+      "/bin/bash $${PROJECT_PATH}/docker/wait_deps.sh /bin/sh $${PROJECT_PATH}/docker/start.sh"]
+
+  mysql:
+    build:
+      context: .
+      dockerfile: ./docker/mysql.Dockerfile
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d
+      - ./mysql/logs:/logs
+      - ./mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 3309:3306
+    container_name: "$MYSQL_HOST"
+    env_file:
+      - conf/app.env
+
+#  redis_cluster:
+#    image: harbor.wps.kingsoft.net/library/redis-cluster:v3.2.11
+#    container_name: "base-redis_cluster"

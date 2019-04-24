@@ -1,0 +1,8 @@
+*.exe
+.idea
+*.exe~
+
+swagger/
+GolangBase
+id_rsa
+mysql/
