@@ -7,6 +7,10 @@ source ../conf/app.env
 export APP_VERSION=1.0
 APP_IMAGE=xianzixiang/`echo -n $PROJECT_NAME | awk '{print tolower($0)}'`:$APP_VERSION
 
+echo remove image ${APP_IMAGE} ...
+
+docker rmi $APP_IMAGE -f
+
 echo running image [${APP_IMAGE}].....
 
 docker-compose up --build
