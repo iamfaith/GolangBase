@@ -51,12 +51,14 @@ func (this *BaseController) Success(msg string, data interface{}) {
 
 func (this *BaseController) Upload() {
 	if f, h, err := this.GetFile("file"); err != nil {
+		beego.Error(err)
 		this.Fail(CodeBadParam, err.Error())
 	} else {
 		if f == nil {
 			this.Fail(CodeBadParam, "file is null")
 		} else {
 			path := *beego.ServicePath + "upload/" + h.Filename
+			beego.Info("upload file at ", path)
 			defer f.Close()
 			this.SaveToFile("file", path)
 			this.Success("ok", nil)
