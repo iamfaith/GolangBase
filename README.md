@@ -1,5 +1,7 @@
 # GolangBase
 
+[![Build Status](https://travis-ci.org/iamfaith/GolangBase.svg?branch=master)](https://travis-ci.org/iamfaith/GolangBase)
+
 ## Option 1
 
 run godep save ./... first
