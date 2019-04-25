@@ -1,4 +1,15 @@
-language: go
+language: python
+python:
+- "3.5"
+services:
+- docker
+env:
+- APP_VERSION=1.0
+script:
+- chmod +x buildApp.sh && buildApp.sh $APP_VERSION
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- docker push xianzixiang/`echo -n $PROJECT_NAME | awk '{print tolower($0)}'`:$V
 
-go:
-- "1.11.4"
+branches:
+  only:
+  - dev
