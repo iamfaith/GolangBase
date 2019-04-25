@@ -13,4 +13,4 @@ run godep save ./... first
 
 ## upload interface
 
-curl 127.0.0.1:8004/v1/file -X POST -F "file=@test.zip"  
+curl 127.0.0.1:8004/v1/file -X POST -F "@file=imagetool.zip"  
