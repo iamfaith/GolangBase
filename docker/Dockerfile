@@ -19,7 +19,8 @@ ARG PROJECT_NAME
 
 ARG PROJECT_PATH
 
-RUN mkdir -p ${PROJECT_PATH}/bin && mkdir -p /etc/supervisord/ && mkdir -p /data
+RUN mkdir -p ${PROJECT_PATH}/bin && mkdir -p /etc/supervisord/ && mkdir -p /data \
+    && cd /data && touch "`date '+%Y-%m-%d %H:%M:%S'`"
 
 COPY --from=builder /go/bin/$PROJECT_NAME ${PROJECT_PATH}/bin
 COPY --from=builder ${PROJECT_PATH}/conf ${PROJECT_PATH}/conf
