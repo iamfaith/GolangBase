@@ -8,7 +8,7 @@ env:
 script:
 - chmod +x ./buildApp.sh && ./buildApp.sh $APP_VERSION
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- docker push xianzixiang/`echo -n $PROJECT_NAME | awk '{print tolower($0)}'`:$V
+- docker push xianzixiang/`echo -n $PROJECT_NAME | awk '{print tolower($0)}'`:$APP_VERSION
 
 branches:
   only:
