@@ -1,5 +1,5 @@
 
-FROM xianzixiang/go_builder as builder
+FROM xianzixiang/go_builder:1.0 as builder
 
 ARG PROJECT_NAME
 ARG PROJECT_PATH
@@ -7,18 +7,9 @@ ARG PROJECT_PATH
 
 ADD . $PROJECT_PATH
 
-#构建机在构建image的时候，需要  cp /home/kingsoft/.ssh/id_rsa ./
-ADD id_rsa /root/.ssh/id_rsa
-# 解决Windows下copy进去id_rsa文件权限过高
-RUN chmod 0600 /root/.ssh/id_rsa
 
-# Create known_hosts
-RUN echo "10.13.0.32 ksogit.kingsoft.net" >> /etc/hosts \
-    && touch /root/.ssh/known_hosts \
-    && ssh-keyscan ksogit.kingsoft.net >> /root/.ssh/known_hosts \
-    && cd $PROJECT_PATH \
-    && /bin/sh docker/gobuilder.sh \
-	&& rm -f /root/.ssh/id_rsa
+RUN cd $PROJECT_PATH \
+    && /bin/sh docker/gobuilder.sh
 
 
 FROM xianzixiang/go_alpine:latest

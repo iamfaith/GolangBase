@@ -36,5 +36,5 @@ services:
       - conf/app.env
 
 #  redis_cluster:
-#    image: harbor.wps.kingsoft.net/library/redis-cluster:v3.2.11
+#    image: xianzixiang/redis-cluster:v3.2.11
 #    container_name: "base-redis_cluster"

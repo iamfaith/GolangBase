@@ -9,12 +9,14 @@ if [ ! -h ${GOPATH}/src/${PROJECT_NAME} ]; then
 	ln -s "${PROJECT_ROOT}" ${GOPATH}/src/${PROJECT_NAME}
 fi
 
-cd $GOPATH/src
+cd $GOPATH/src/${PROJECT_NAME}
 
+if [ -d  ${GOPATH}/src/${PROJECT_NAME}/vendor/vendor ]; then
+    ln -s ${GOPATH}/src/${PROJECT_NAME}/vendor/vendor $GOPATH/src
+else
+    go get .
+fi
 
-git clone git@ksogit.kingsoft.net:mo_server/vendor.git
-
-
-cd ${PROJECT_NAME} && go install .
+go install .
 
 
