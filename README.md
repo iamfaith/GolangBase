@@ -11,3 +11,6 @@ run godep save ./... first
 1. chmod +x buildApp.sh && buildApp.sh (version_number) if not set version_number, will set 0.1 as default.
 
 
+## upload interface
+
+curl 127.0.0.1:8004/v1/file -X POST -F "file=@test.zip"  
