@@ -10,6 +10,8 @@ import (
 func CopyBuildTime() {
 	if err := util.CopyDir("/build_time", "/data/build_time"); err != nil {
 		logs.Error(err)
+	} else {
+		logs.Info("copy build time success.")
 	}
 }
 

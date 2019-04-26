@@ -1,4 +1,12 @@
 #!/bin/bash
 
 echo "begin to deploy"
-# use web hook instead
+
+. /etc/profile
+. /home/faith/.profile
+
+eval `ssh-agent -s`
+ssh-add ~/.ssh/id_rsa
+
+
+git pull && cd bin/ && chmod +x exec.sh && ./exec.sh

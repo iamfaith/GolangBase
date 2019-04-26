@@ -19,7 +19,8 @@ jobs:
 deploy:
   skip_cleanup: true
   provider: script
-  script: chmod +x ./build/deploy.sh && ./build/deploy.sh $VULTR_USER $VULTR_PASSWD
+  script:
+  - curl http://faithio.cn:9000/hooks/deploy-base
 
 
 branches:
