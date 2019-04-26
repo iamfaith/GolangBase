@@ -19,12 +19,12 @@ ARG PROJECT_NAME
 
 ARG PROJECT_PATH
 
-RUN mkdir -p ${PROJECT_PATH}/bin && mkdir -p /etc/supervisord/ && mkdir -p /build_time \
-    && cd /build_time && touch "`date '+%Y-%m-%d %H:%M:%S'`"
 
 COPY --from=builder /go/bin/$PROJECT_NAME ${PROJECT_PATH}/
 COPY --from=builder ${PROJECT_PATH}/conf ${PROJECT_PATH}/conf
 COPY --from=builder ${PROJECT_PATH}/docker ${PROJECT_PATH}/docker
+
+RUN chmod +x ${PROJECT_PATH}/init.sh && ${PROJECT_PATH}/init.sh
 
 RUN chmod +x ${PROJECT_PATH}/$PROJECT_NAME
 
