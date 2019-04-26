@@ -1,14 +1,20 @@
-language: python
-python:
-- "3.5"
+#language: python
+#python:
+#- "3.5"
 services:
 - docker
 env:
 - APP_VERSION=1.0
-script:
-- chmod +x ./buildApp.sh && ./buildApp.sh $APP_VERSION
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- chmod +x ./pushApp.sh && ./pushApp.sh $APP_VERSION
+jobs:
+  include:
+  - stage: build docker image
+    script:
+    - chmod +x ./buildApp.sh && ./buildApp.sh $APP_VERSION
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - chmod +x ./pushApp.sh && ./pushApp.sh $APP_VERSION
+  - stage: deploy server
+    script:
+    - echo "test deploy"
 
 branches:
   only:
