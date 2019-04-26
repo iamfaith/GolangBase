@@ -5,6 +5,8 @@ source conf/app.env
 
 V=$1
 V=${V:=0.1}
-echo Building App as version: ${V}
+tagName=`echo -n $PROJECT_NAME | awk '{print tolower($0)}'`:$V
+echo Building App as version: ${V} Tag Name: ${tagName}
 
-docker build -t xianzixiang/`echo -n $PROJECT_NAME | awk '{print tolower($0)}'`:$V -f ./docker/Dockerfile --build-arg PROJECT_NAME=$PROJECT_NAME  --build-arg PROJECT_PATH=$PROJECT_PATH .
+docker build -t ${tagName} -f ./docker/Dockerfile --build-arg PROJECT_NAME=$PROJECT_NAME  --build-arg PROJECT_PATH=$PROJECT_PATH .
+docker tag ${tagName} xianzixiang/${tagName}
