@@ -4,7 +4,7 @@ python:
 services:
 - docker
 env:
-- APP_VERSION=1.0
+- APP_VERSION=latest
 jobs:
   include:
   - stage: build docker image
