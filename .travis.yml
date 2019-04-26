@@ -9,12 +9,12 @@ jobs:
   include:
   - stage: build docker image
     script:
-    - chmod +x ./buildApp.sh && ./buildApp.sh $APP_VERSION
+    - chmod +x ./build/buildApp.sh && ./build/buildApp.sh $APP_VERSION
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - chmod +x ./pushApp.sh && ./pushApp.sh $APP_VERSION
+    - chmod +x ./build/pushApp.sh && ./build/pushApp.sh $APP_VERSION
   - stage: deploy server
     script:
-    - echo "test deploy"
+    - chmod +x ./build/deploy.sh && ./build/deploy.sh "$DOCKER_USERNAME"
 
 branches:
   only:

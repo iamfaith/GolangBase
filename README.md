@@ -8,7 +8,7 @@ run godep save ./... first
 
 ## Option 2
 
-1. chmod +x buildApp.sh && buildApp.sh (version_number) if not set version_number, will set 0.1 as default.
+1. cd build && chmod +x buildApp.sh && buildApp.sh (version_number) if not set version_number, will set 0.1 as default.
 
 
 ## upload interface
