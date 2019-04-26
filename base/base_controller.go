@@ -2,6 +2,10 @@ package base
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/utils"
+	"os"
+	"path/filepath"
+	"wps.ai/yun/ytalk/common/log"
 )
 
 type BaseController struct {
@@ -51,14 +55,18 @@ func (this *BaseController) Success(msg string, data interface{}) {
 
 func (this *BaseController) Upload() {
 	if f, h, err := this.GetFile("file"); err != nil {
-		beego.Error(err)
+		log.Error(err)
 		this.Fail(CodeBadParam, err.Error())
 	} else {
 		if f == nil {
 			this.Fail(CodeBadParam, "file is null")
 		} else {
-			path := *beego.ServicePath + "upload/" + h.Filename
-			beego.Info("upload file at ", path)
+			path := "upload/" + h.Filename
+			if !utils.FileExists(path) {
+				workPath, _ := os.Getwd()
+				path = filepath.Join(filepath.Dir(workPath), path)
+			}
+			log.Info("upload file at ", path)
 			defer f.Close()
 			this.SaveToFile("file", path)
 			this.Success("ok", nil)
