@@ -17,5 +17,5 @@ if [ $op != n ]; then
 fi
 
 echo running image [${APP_IMAGE}].....
-
+docker-compose stop
 docker-compose up --build

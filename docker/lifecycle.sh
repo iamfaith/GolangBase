@@ -1,7 +1,4 @@
 #!/bin/bash
-# author: HuangChuanTong@WPS.cn
-# date  : 2018-08-08
-#
 # 退出回收, 发送kill -TERM ${pid} 后10~15秒调用脚本检测
 # SIGTERM=15
 #

@@ -1,12 +1,9 @@
 #!/bin/bash
-# author: HuangChuanTong@WPS.cn
-# date  : 2018-08-08
-#
 # 健康检测, 大概每10~15秒调用一次
 #
 #
 
-HEALTHY_URL="http://127.0.0.1:8004/alive"
+HEALTHY_URL="http://faithio.cn:8004/alive"
 
 RESP=`curl --connect-timeout 1 -s ${HEALTHY_URL}`
 
