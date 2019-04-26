@@ -64,13 +64,9 @@ func (this *BaseController) Upload() {
 			fileName := h.Filename
 			path := "/data/upload/"
 			if !utils.FileExists(path) {
-				workPath, _ := os.Getwd()
-				path = filepath.Join(filepath.Dir(workPath), path)
-				if !utils.FileExists(path) {
-					os.MkdirAll(path, os.ModePerm)
-				}
-				path = filepath.Join(path, fileName)
+				os.MkdirAll(path, os.ModePerm)
 			}
+			path = filepath.Join(path, fileName)
 			logs.Info("upload file at ", path)
 			defer f.Close()
 			this.SaveToFile("file", path)
