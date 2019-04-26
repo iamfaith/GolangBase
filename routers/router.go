@@ -1,9 +1,9 @@
 package routers
 
 import (
+	"GolangBase/base"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-	"GolangBase/base"
 )
 
 func init() {
@@ -22,7 +22,7 @@ func init() {
 	beego.AddNamespace(fileRouter)
 
 	//beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
-	//	AllowOrigins:  []string{"*.wps.cn"},
+	//	AllowOrigins:  []string{"*.faithio.cn"},
 	//	AllowMethods:  []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 	//	AllowHeaders:  []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 	//	ExposeHeaders: []string{"Content-Length", "Access-Control-Allow-Origin"},
