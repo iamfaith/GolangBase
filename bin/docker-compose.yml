@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: $APP_IMG
+    image: $APP_IMG:$APP_VERSION
     volumes:
       - ../app_data:/data
     depends_on:
