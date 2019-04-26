@@ -7,8 +7,11 @@ services:
       args:
         PROJECT_NAME: "$PROJECT_NAME"
         PROJECT_PATH: "$PROJECT_PATH"
+    volumes:
+      - ./app_data:/data
     depends_on:
       - "mysql"
+      - "redis_cluster"
     stdin_open: true
     tty: true
     container_name: "$PROJECT_NAME"
@@ -35,6 +38,8 @@ services:
     env_file:
       - conf/app.env
 
-#  redis_cluster:
-#    image: xianzixiang/redis-cluster:v3.2.11
-#    container_name: "base-redis_cluster"
+  redis_cluster:
+    image: xianzixiang/redis-cluster:3.2.12
+    container_name: "$REDIS_NAME"
+    ports:
+      - 7000:7000
