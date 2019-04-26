@@ -24,7 +24,7 @@ COPY --from=builder /go/bin/$PROJECT_NAME ${PROJECT_PATH}/
 COPY --from=builder ${PROJECT_PATH}/conf ${PROJECT_PATH}/conf
 COPY --from=builder ${PROJECT_PATH}/docker ${PROJECT_PATH}/docker
 
-RUN chmod +x ${PROJECT_PATH}/init.sh && ${PROJECT_PATH}/init.sh
+RUN chmod +x ${PROJECT_PATH}/docker/init.sh && ${PROJECT_PATH}/docker/init.sh
 
 RUN chmod +x ${PROJECT_PATH}/$PROJECT_NAME
 
