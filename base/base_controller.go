@@ -62,7 +62,7 @@ func (this *BaseController) Upload() {
 			this.Fail(CodeBadParam, "file is null")
 		} else {
 			fileName := h.Filename
-			path := "upload/"
+			path := "/data/upload/"
 			if !utils.FileExists(path) {
 				workPath, _ := os.Getwd()
 				path = filepath.Join(filepath.Dir(workPath), path)
