@@ -12,14 +12,14 @@ jobs:
     - chmod +x ./build/buildApp.sh && ./build/buildApp.sh $APP_VERSION
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - chmod +x ./build/pushApp.sh && ./build/pushApp.sh $APP_VERSION
-  - stage: check whether server is alive
-    script:
-    - chmod +x ./docker/livenessProbe.sh && ./docker/livenessProbe.sh
+#  - stage: check whether server is alive
+#    script:
+#    - chmod +x ./docker/livenessProbe.sh && ./docker/livenessProbe.sh
 
 deploy:
   skip_cleanup: true
   provider: script
-  script: chmod +x ./build/deploy.sh && ./build/deploy.sh test
+  script: chmod +x ./build/deploy.sh && ./build/deploy.sh $VULTR_USER $VULTR_PASSWD
 
 
 branches:

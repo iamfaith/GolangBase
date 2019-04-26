@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo "begin to deploy"
-echo $1
+# use web hook instead
