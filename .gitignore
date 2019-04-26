@@ -7,3 +7,4 @@ GolangBase
 id_rsa
 mysql/
 app_data/
+build_time/
