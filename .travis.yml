@@ -16,6 +16,14 @@ jobs:
     script:
     - chmod +x ./build/deploy.sh && ./build/deploy.sh "$DOCKER_USERNAME"
 
+deploy:
+  provider: script
+  script: chmod +x ./build/deploy.sh && ./build/deploy.sh test
+
+
 branches:
   only:
   - master
+
+git:
+  depth: 5
