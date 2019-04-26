@@ -61,10 +61,15 @@ func (this *BaseController) Upload() {
 		if f == nil {
 			this.Fail(CodeBadParam, "file is null")
 		} else {
-			path := "upload/" + h.Filename
+			fileName := h.Filename
+			path := "upload/"
 			if !utils.FileExists(path) {
 				workPath, _ := os.Getwd()
 				path = filepath.Join(filepath.Dir(workPath), path)
+				if !utils.FileExists(path) {
+					os.MkdirAll(path, os.ModePerm)
+				}
+				path = filepath.Join(path, fileName)
 			}
 			logs.Info("upload file at ", path)
 			defer f.Close()
