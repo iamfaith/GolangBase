@@ -4,7 +4,7 @@
 export $(cut -d= -f1 ../conf/app.env)
 source ../conf/app.env
 
-APP_IMAGE=xianzixiang/`echo -n $PROJECT_NAME | awk '{print tolower($0)}'`:$APP_VERSION
+APP_IMAGE=${APP_IMG}:${APP_VERSION}
 
 op=$1
 op=${op:=n}
