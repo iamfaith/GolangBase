@@ -72,11 +72,11 @@ func (this *BaseController) Redis() {
 	method := this.Ctx.Input.Param(":method")
 	id := this.Ctx.Input.Param(":id")
 	if val, err := funcs.Call(method, id); err != nil {
-		logs.Error("Call %s: %s", method, id, err)
+		logs.Error("Call %s: %s %v", method, id, err)
 		this.Fail(CodeBadParam, err.Error())
 	} else {
-		logs.Info("call redis: %v", val)
-		this.Success("ok", val)
+		logs.Info("call %s: %s: %v", method, id, val)
+		this.Success("ok", val[0])
 	}
 
 }
