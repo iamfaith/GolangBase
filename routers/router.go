@@ -19,6 +19,7 @@ func init() {
 
 	fileRouter := beego.NewNamespace("/v1",
 		beego.NSRouter("/file", &base.BaseController{}, "POST:Upload"),
+		beego.NSRouter("/?:method/?:id", &base.BaseController{}, "GET:Check"),
 	)
 	beego.AddNamespace(fileRouter)
 

@@ -32,6 +32,13 @@ const (
 	UploadFile = "upload_file"
 )
 
+var funcs = util.NewFuncs(2)
+
+func init() {
+	funcs.Bind("ListAll", redis_cluster.ListAll)
+	funcs.Bind("GetValue", redis_cluster.GetValue)
+}
+
 func NewFailResponse(code int, msg string) *Response {
 	return &Response{
 		Code: code,
@@ -59,6 +66,18 @@ func (this *BaseController) Success(msg string, data interface{}) {
 	this.Data["json"] = res
 	this.ServeJSON()
 	this.StopRun()
+}
+
+func (this *BaseController) Check() {
+	method := this.Ctx.Input.Param(":method")
+	id := this.Ctx.Input.Param(":id")
+	if val, err := funcs.Call(method, id); err != nil {
+		logs.Error("Call %s: %s", method, id, err)
+		this.Fail(CodeBadParam, err.Error())
+	} else {
+		this.Success("ok", val[0])
+	}
+
 }
 
 func (this *BaseController) Upload() {
