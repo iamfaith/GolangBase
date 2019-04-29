@@ -11,48 +11,13 @@ type CallBack func(*context.Context, CallBackResult)
 type AuthStatus int
 
 const (
-	AUTH_ERR AuthStatus = iota
-	AUTH_NO_LOGIN
-	AUTH_NO_USER
-	AUTH_NO_PERM
-	AUTH_HAS_READ_PERM
-	AUTH_HAS_WRITE_PERM
-	AUTH_SUCCESS
-)
-
-type EnumType int
-
-const (
-	begin            EnumType = iota
-	Status           EnumType = iota
-	end              EnumType = iota
-)
-
-var enums = [...]string{"begin", "status", "end"}
-
-func (a EnumType) String() string {
-	if a <= begin || a >= end {
-		return ""
-	}
-	return enums[a]
-}
-
-func ContainsEnum(modelType string) bool {
-	for _, t := range enums {
-		if t == begin.String() || t == end.String() {
-			continue
-		}
-		if modelType == t {
-			return true
-		}
-	}
-	return false
-}
-
-var (
-	defaultAllowHeaders = []string{"Origin", "Accept", "Content-Type", "Authorization"}
-	// Regex patterns are generated from AllowOrigins. These are used and generated internally.
-	allowOriginPatterns = []string{}
+	AuthErr          AuthStatus = iota
+	AuthNoLogin
+	AuthNoUser
+	AuthNoPerm
+	AuthHasReadPerm
+	AuthHasWritePerm
+	AuthSuccess
 )
 
 func auth(ctx *context.Context, args ...interface{}) CallBackResult {
@@ -61,7 +26,7 @@ func auth(ctx *context.Context, args ...interface{}) CallBackResult {
 	if name == "" {
 		name = ctx.Input.Cookie("uname")
 		if name == "" {
-			ret[Status.String()] = AUTH_NO_LOGIN
+			ret[Status.String()] = AuthNoLogin
 		}
 	}
 	return ret

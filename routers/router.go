@@ -25,7 +25,7 @@ func init() {
 
 	cb := func(ctx *context.Context, ret base.CallBackResult) {
 		switch ret[base.Status.String()] {
-		case base.AUTH_NO_LOGIN:
+		case base.AuthNoLogin:
 			beego.Debug("should redirect to login")
 			ctx.Redirect(303, "http://www.faithio.cn")
 			return

@@ -6,6 +6,9 @@ import (
 	"github.com/astaxie/beego/utils"
 	"os"
 	"path/filepath"
+	"ad-adapter/redis"
+	"GolangBase/util"
+	"GolangBase/model"
 )
 
 type BaseController struct {
@@ -22,6 +25,10 @@ const (
 	CodeOk        = 0
 	CodeBadParam  = -1
 	CodeServerErr = -2
+)
+
+const (
+	UploadFile = "upload_file"
 )
 
 func NewFailResponse(code int, msg string) *Response {
@@ -70,7 +77,12 @@ func (this *BaseController) Upload() {
 			logs.Info("upload file at ", path)
 			defer f.Close()
 			this.SaveToFile("file", path)
-			this.Success("ok", nil)
+			sha1, _ := util.HashFileSha1(path)
+			if err := redis.SetValueWithTimeout(UploadFile+sha1, model.UploadFile{Status: NotProcess.String(), FilePath: path}, 600); err != nil {
+				this.Fail(CodeBadParam, "redis gone wrong")
+			} else  {
+				this.Success("ok", sha1)
+			}
 		}
 	}
 }
