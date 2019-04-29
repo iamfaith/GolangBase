@@ -58,6 +58,14 @@ func LPop(key string) (string, error) {
 	return re.Result()
 }
 
+func RPop(key string) (string, error) {
+	re := client.RPop(key)
+	if re.Err() != nil {
+		return "", re.Err()
+	}
+	return re.Result()
+}
+
 //如果要返回所有，start=0 end=-1
 func LRange(key string, start, end int64) ([]string, error) {
 	re := client.LRange(key, start, end)
@@ -299,8 +307,7 @@ func Keys(key string) ([]string, error) {
 
 func newClient(addrs []string) *redis.ClusterClient {
 	client = redis.NewClusterClient(&redis.ClusterOptions{
-		Addrs:          addrs,
-		FixIPRemapping: true,
+		Addrs: addrs,
 	})
 
 	cmd := client.Ping()
