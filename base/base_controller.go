@@ -79,7 +79,8 @@ func (this *BaseController) Upload() {
 			this.SaveToFile("file", path)
 			sha1, _ := util.HashFileSha1(path)
 			if err := redis_cluster.SetExValue(UploadFile+sha1, model.UploadFile{Status: NotProcess.String(), FilePath: path}, 600); err != nil {
-				this.Fail(CodeBadParam, "redis gone wrong")
+				logs.Error(sha1, path, err)
+				this.Fail(CodeBadParam, err.Error())
 			} else {
 				redis_cluster.LPush(UploadFile, sha1)
 				this.Success("ok", sha1)
