@@ -10,6 +10,11 @@ import (
 	"encoding/hex"
 )
 
+func Exist(name string) bool {
+	_, err := os.Stat(name)
+	return err == nil
+}
+
 func HashFileSha1(filePath string) (string, error) {
 	//Initialize variable returnMD5String now in case an error has to be returned
 	var returnSHA1String string
