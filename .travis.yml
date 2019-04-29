@@ -25,7 +25,7 @@ deploy:
 
 branches:
   only:
-  - master
+  - dev
 
 git:
   depth: 5
