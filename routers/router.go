@@ -27,7 +27,7 @@ func init() {
 		switch ret[base.Status.String()] {
 		case base.AUTH_NO_LOGIN:
 			beego.Debug("should redirect to login")
-			ctx.Redirect(303, "www.baidu.com")
+			ctx.Redirect(303, "http://www.faithio.cn")
 			return
 		}
 	}
