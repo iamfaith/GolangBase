@@ -10,7 +10,7 @@ const (
 	end        EnumType = iota
 )
 
-var enums = [...]string{"begin", "NotProcess", "Processed", "end"}
+var enums = [...]string{"begin", "Status", "NotProcess", "Processed", "end"}
 
 func (a EnumType) String() string {
 	if a <= begin || a >= end {

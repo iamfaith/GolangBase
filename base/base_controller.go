@@ -68,13 +68,14 @@ func (this *BaseController) Success(msg string, data interface{}) {
 	this.StopRun()
 }
 
-func (this *BaseController) Check() {
+func (this *BaseController) Redis() {
 	method := this.Ctx.Input.Param(":method")
 	id := this.Ctx.Input.Param(":id")
 	if val, err := funcs.Call(method, id); err != nil {
 		logs.Error("Call %s: %s", method, id, err)
 		this.Fail(CodeBadParam, err.Error())
 	} else {
+		logs.Info("call redis", val)
 		this.Success("ok", val[0])
 	}
 
