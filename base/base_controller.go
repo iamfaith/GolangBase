@@ -6,9 +6,9 @@ import (
 	"github.com/astaxie/beego/utils"
 	"os"
 	"path/filepath"
-	"ad-adapter/redis"
 	"GolangBase/util"
 	"GolangBase/model"
+	"GolangBase/service/redis_cluster"
 )
 
 type BaseController struct {
@@ -78,7 +78,7 @@ func (this *BaseController) Upload() {
 			defer f.Close()
 			this.SaveToFile("file", path)
 			sha1, _ := util.HashFileSha1(path)
-			if err := redis.SetValueWithTimeout(UploadFile+sha1, model.UploadFile{Status: NotProcess.String(), FilePath: path}, 600); err != nil {
+			if err := redis_cluster.SetExValue(UploadFile+sha1, model.UploadFile{Status: NotProcess.String(), FilePath: path}, 600); err != nil {
 				this.Fail(CodeBadParam, "redis gone wrong")
 			} else  {
 				this.Success("ok", sha1)
