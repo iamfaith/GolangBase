@@ -4,6 +4,7 @@ import (
 	"GolangBase/base"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
+	"github.com/astaxie/beego/plugins/cors"
 )
 
 func init() {
@@ -21,10 +22,23 @@ func init() {
 	)
 	beego.AddNamespace(fileRouter)
 
-	//beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
-	//	AllowOrigins:  []string{"*.faithio.cn"},
-	//	AllowMethods:  []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-	//	AllowHeaders:  []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
-	//	ExposeHeaders: []string{"Content-Length", "Access-Control-Allow-Origin"},
-	//}))
+
+	cb := func(ctx *context.Context, ret base.CallBackResult) {
+		switch ret[base.Status.String()] {
+		case base.AUTH_NO_LOGIN:
+			beego.Debug("should redirect to login")
+			ctx.Redirect(303, "www.baidu.com")
+			return
+		}
+	}
+
+	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
+		AllowOrigins:  []string{"*.faithio.cn"},
+		AllowMethods:  []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:  []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
+		ExposeHeaders: []string{"Content-Length", "Access-Control-Allow-Origin"},
+	}))
+	beego.InsertFilter("*", beego.BeforeRouter, base.Filter(cb) )
+
+
 }
