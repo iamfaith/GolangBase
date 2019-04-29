@@ -75,8 +75,8 @@ func (this *BaseController) Redis() {
 		logs.Error("Call %s: %s", method, id, err)
 		this.Fail(CodeBadParam, err.Error())
 	} else {
-		logs.Info("call redis", val, val[0])
-		this.Success("ok", val[0])
+		logs.Info("call redis: %v", val)
+		this.Success("ok", val)
 	}
 
 }
