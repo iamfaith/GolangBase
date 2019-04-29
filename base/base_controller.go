@@ -9,6 +9,7 @@ import (
 	"GolangBase/util"
 	"GolangBase/model"
 	"GolangBase/service/redis_cluster"
+	"encoding/json"
 )
 
 type BaseController struct {
@@ -78,7 +79,9 @@ func (this *BaseController) Upload() {
 			defer f.Close()
 			this.SaveToFile("file", path)
 			sha1, _ := util.HashFileSha1(path)
-			if err := redis_cluster.SetExValue(UploadFile+sha1, model.UploadFile{Status: NotProcess.String(), FilePath: path}, 600); err != nil {
+			fileObj, _ := json.Marshal(model.UploadFile{Status: NotProcess.String(), FilePath: path})
+
+			if err := redis_cluster.SetExValue(UploadFile+sha1, string(fileObj), 600); err != nil {
 				logs.Error(sha1, path, err)
 				this.Fail(CodeBadParam, err.Error())
 			} else {
