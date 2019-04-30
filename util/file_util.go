@@ -1,13 +1,14 @@
 package util
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"os"
 	"path/filepath"
-	"crypto/sha1"
-	"encoding/hex"
 )
 
 func Exist(name string) bool {
@@ -15,7 +16,18 @@ func Exist(name string) bool {
 	return err == nil
 }
 
-func HashFileSha1(filePath string) (string, error) {
+func HashFileSha1(file multipart.File) (string, error) {
+	var returnSHA1String string
+	hash := sha1.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		return returnSHA1String, err
+	}
+	hashInBytes := hash.Sum(nil)[:20]
+	returnSHA1String = hex.EncodeToString(hashInBytes)
+	return returnSHA1String, nil
+}
+
+func HashFilePathSha1(filePath string) (string, error) {
 	//Initialize variable returnMD5String now in case an error has to be returned
 	var returnSHA1String string
 

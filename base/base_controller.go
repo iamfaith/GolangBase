@@ -153,11 +153,17 @@ func (this *BaseController) Upload() {
 					path = "./"
 				}
 			}
+			sha1, _ := util.HashFileSha1(f)
+			path = fmt.Sprintf("%s/%s", path, sha1)
+			if !utils.FileExists(path) {
+				os.MkdirAll(path, os.ModePerm)
+			}
 			path = filepath.Join(path, fileName)
 			logs.Info("upload file at ", path)
 			defer f.Close()
-			this.SaveToFile("file", path)
-			sha1, _ := util.HashFileSha1(path)
+			if !utils.FileExists(path) {
+				this.SaveToFile("file", path)
+			}
 			fileObj, _ := json.Marshal(model.UploadFile{Status: NotProcess.String(), FilePath: path})
 
 			if err := redis_cluster.SetExValue(UploadFile+sha1, string(fileObj), 600); err != nil {
