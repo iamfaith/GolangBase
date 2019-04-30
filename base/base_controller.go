@@ -109,9 +109,15 @@ func (this *BaseController) Redis() {
 		case reflect.String:
 			result := ret.String()
 			if len(result) > 0 && result[0] == '[' && result[len(result)-1] == ']' {
-				var arrObj []map[string]interface{}
-				json.Unmarshal([]byte(result), &arrObj)
-				this.Success("ok", arrObj)
+				if strings.Contains(result, "\"") {
+					var arrObj []map[string]interface{}
+					json.Unmarshal([]byte(result), &arrObj)
+					this.Success("ok", arrObj)
+				} else {
+					var arr []int
+					json.Unmarshal([]byte(result), &arr)
+					this.Success("ok", arr)
+				}
 			} else if len(result) > 0 && result[0] == '{' && result[len(result)-1] == '}' {
 				var retObj map[string]interface{}
 				json.Unmarshal([]byte(result), &retObj)

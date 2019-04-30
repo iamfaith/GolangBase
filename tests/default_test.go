@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"GolangBase/service/redis_cluster"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -18,10 +17,15 @@ func TestUser(t *testing.T) {
 	user[0] = User{Status: 1, Name: "jin"}
 	user[1] = User{Status: 0, Name: "f"}
 
-	ret, _ := json.Marshal(user[1])
+	aa := []int{0, 1}
+	ret, _ := json.Marshal(aa)
 
 	var retObj []map[string]interface{}
 	json.Unmarshal([]byte(ret), &retObj)
 	fmt.Print(retObj)
-	redis_cluster.SetValue("c", ret, -1)
+
+	var nums []int
+	json.Unmarshal([]byte("[0,1]"), &nums)
+	fmt.Print(nums)
+	//redis_cluster.SetValue("d", ret, -1)
 }
