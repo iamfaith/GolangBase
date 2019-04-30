@@ -18,14 +18,14 @@ run godep save ./... first
 ## upload interface
 
 echo aa >> test.txt && curl 127.0.0.1:8004/v1/file?uname=1 -X POST -F "file=@test.txt"
-curl faithio.cn:8004/v1/file -X POST -F "file=@imagetool.zip"
+curl faithio.cn:8004/v1/file -X POST -F "file=@test.txt"
 
 ##
 ```
 
  curl 127.0.0.1:8004/v1/GetValue/upload_file4e40da587ba423e49862a841798f700220543880?uname=1
 
- curl 127.0.0.1:8004/v1/ListAll/upload_file?uname=1
+ curl faithio.cn:8004/v1/ListAll/upload_file?uname=1
 
 ```
 
