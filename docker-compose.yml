@@ -40,6 +40,13 @@ services:
 
   redis_cluster:
     image: xianzixiang/redis-cluster:3.2.12
+    hostname: redis-server
+#    extra_hosts:
+#      redis-server: 10.13.X.X
     container_name: "$REDIS_NAME"
+    environment:
+      IP: '0.0.0.0'
+      SENTINEL: 'true'
+      STANDALONE: 'false'
     ports:
       - 7000:7000

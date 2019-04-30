@@ -12,10 +12,11 @@ fi
 cd $GOPATH/src/${PROJECT_NAME}
 
 if [ -d  ${GOPATH}/src/${PROJECT_NAME}/vendor/vendor ]; then
+    echo link vendor
     ln -s ${GOPATH}/src/${PROJECT_NAME}/vendor/vendor $GOPATH/src
+else
+    go get .
 fi
 
-
-go get . && go install .
-
+go install .
 

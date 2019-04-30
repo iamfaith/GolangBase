@@ -308,7 +308,6 @@ func Keys(key string) ([]string, error) {
 func newClient(addrs []string) *redis.ClusterClient {
 	client = redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs: addrs,
-		FixIPRemapping: true,
 	})
 
 	cmd := client.Ping()
