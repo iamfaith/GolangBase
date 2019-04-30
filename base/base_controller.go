@@ -1,15 +1,19 @@
 package base
 
 import (
+	"GolangBase/model"
+	"GolangBase/service/redis_cluster"
+	"GolangBase/util"
+	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/utils"
 	"os"
 	"path/filepath"
-	"GolangBase/util"
-	"GolangBase/model"
-	"GolangBase/service/redis_cluster"
-	"encoding/json"
+	"reflect"
+	"strconv"
+	"strings"
 )
 
 type BaseController struct {
@@ -71,12 +75,59 @@ func (this *BaseController) Success(msg string, data interface{}) {
 func (this *BaseController) Redis() {
 	method := this.Ctx.Input.Param(":method")
 	id := this.Ctx.Input.Param(":id")
-	if val, err := funcs.Call(method, id); err != nil {
+	if strings.Contains(id, "*") {
+		this.Fail(CodeBadParam, "bad param")
+	}
+	//var err error
+	//var ret interface{}
+	//switch method {
+	//case "ListAll":
+	//	ret, err = redis_cluster.ListAll(id)
+	//	break
+	//case "GetValue":
+	//	ret, err = redis_cluster.GetValue(id)
+	//	break
+	//default:
+	//	err = errors.New("bad params")
+	//}
+	//if err != nil {
+	//	logs.Error(err)
+	//	this.Fail(CodeBadParam, err.Error())
+	//} else {
+	//	this.Success("ok", ret)
+	//}
+	if val, err := funcs.Call(method, id); err != nil || len(val) == 0 {
 		logs.Error("Call %s: %s %v", method, id, err)
-		this.Fail(CodeBadParam, err.Error())
+		this.Fail(CodeBadParam, fmt.Sprintf("bad param: %v", err.Error()))
 	} else {
-		logs.Info("call %s: %s: %v", method, id, val)
-		this.Success("ok", val[0])
+		ret := val[0]
+		logs.Info(ret.Kind())
+		switch ret.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			result := strconv.FormatInt(ret.Int(), 10)
+			this.Success("ok", result)
+		case reflect.String:
+			result := ret.String()
+			if len(result) > 0 && result[0] == '[' && result[len(result)-1] == ']' {
+				var arrObj []map[string]interface{}
+				json.Unmarshal([]byte(result), &arrObj)
+				this.Success("ok", arrObj)
+			} else if len(result) > 0 && result[0] == '{' && result[len(result)-1] == '}' {
+				var retObj map[string]interface{}
+				json.Unmarshal([]byte(result), &retObj)
+				this.Success("ok", retObj)
+			}
+			this.Success("ok", result)
+		case reflect.Slice:
+			count := ret.Len()
+			var arrays []string
+			for i := 0; i < count; i++ {
+				arrays = append(arrays, ret.Index(i).String())
+			}
+			this.Success("ok", arrays)
+		}
+		logs.Info("call %s: %s: %v %v %v", method, id, val, ret)
+		this.Success("ok", "")
 	}
 
 }
@@ -90,9 +141,11 @@ func (this *BaseController) Upload() {
 			this.Fail(CodeBadParam, "file is null")
 		} else {
 			fileName := h.Filename
-			path := "/data/upload/"
+			path := beego.AppConfig.String("upload_path")
 			if !utils.FileExists(path) {
-				os.MkdirAll(path, os.ModePerm)
+				if err := os.MkdirAll(path, os.ModePerm); err != nil {
+					path = "./"
+				}
 			}
 			path = filepath.Join(path, fileName)
 			logs.Info("upload file at ", path)

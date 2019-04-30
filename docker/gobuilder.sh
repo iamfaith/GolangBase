@@ -13,10 +13,9 @@ cd $GOPATH/src/${PROJECT_NAME}
 
 if [ -d  ${GOPATH}/src/${PROJECT_NAME}/vendor/vendor ]; then
     ln -s ${GOPATH}/src/${PROJECT_NAME}/vendor/vendor $GOPATH/src
-else
-    go get .
 fi
 
-go install .
+
+go get . && go install .
 
 
