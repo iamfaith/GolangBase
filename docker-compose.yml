@@ -31,7 +31,7 @@ services:
       - ./mysql/logs:/logs
       - ./mysql/data:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD="$MYSQL_PWD"
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PWD
     ports:
       - 3309:3306
     container_name: "$MYSQL_HOST"
