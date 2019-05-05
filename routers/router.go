@@ -19,10 +19,9 @@ func init() {
 
 	fileRouter := beego.NewNamespace("/v1",
 		beego.NSRouter("/file", &base.BaseController{}, "POST:Upload"),
-		beego.NSRouter("/?:method/?:id", &base.BaseController{}, "GET:Redis"),
+		beego.NSRouter("/?:method/?:id", &base.BaseController{}, "GET:Reflect"),
 	)
 	beego.AddNamespace(fileRouter)
-
 
 	cb := func(ctx *context.Context, ret base.CallBackResult) {
 		switch ret[base.Status.String()] {
@@ -39,7 +38,6 @@ func init() {
 		AllowHeaders:  []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders: []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
-	beego.InsertFilter("*", beego.BeforeRouter, base.Filter(cb) )
-
+	beego.InsertFilter("*", beego.BeforeRouter, base.Filter(cb))
 
 }

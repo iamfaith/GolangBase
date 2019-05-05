@@ -41,6 +41,7 @@ var funcs = util.NewFuncs(2)
 func init() {
 	funcs.Bind("ListAll", redis_cluster.ListAll)
 	funcs.Bind("GetValue", redis_cluster.GetValue)
+	funcs.Bind("FindLinkByUid", model.FindLinkByUid)
 }
 
 func NewFailResponse(code int, msg string) *Response {
@@ -72,7 +73,7 @@ func (this *BaseController) Success(msg string, data interface{}) {
 	this.StopRun()
 }
 
-func (this *BaseController) Redis() {
+func (this *BaseController) Reflect() {
 	method := this.Ctx.Input.Param(":method")
 	id := this.Ctx.Input.Param(":id")
 	if strings.Contains(id, "*") {

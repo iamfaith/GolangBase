@@ -15,7 +15,7 @@ if [ -d  ${GOPATH}/src/${PROJECT_NAME}/vendor/vendor ]; then
     echo link vendor
     ln -s ${GOPATH}/src/${PROJECT_NAME}/vendor/vendor $GOPATH/src
 else
-    go get .
+    go get . -v
 fi
 
 go install .
