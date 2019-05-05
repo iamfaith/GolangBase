@@ -79,31 +79,18 @@ func (this *BaseController) Reflect() {
 	if strings.Contains(id, "*") {
 		this.Fail(CodeBadParam, "bad param")
 	}
-	//var err error
-	//var ret interface{}
-	//switch method {
-	//case "ListAll":
-	//	ret, err = redis_cluster.ListAll(id)
-	//	break
-	//case "GetValue":
-	//	ret, err = redis_cluster.GetValue(id)
-	//	break
-	//default:
-	//	err = errors.New("bad params")
-	//}
-	//if err != nil {
-	//	logs.Error(err)
-	//	this.Fail(CodeBadParam, err.Error())
-	//} else {
-	//	this.Success("ok", ret)
-	//}
-	if val, err := funcs.Call(method, id); err != nil || len(val) == 0 {
-		logs.Error("Call %s: %s %v", method, id, err)
+	this.callFunc(method, id)
+
+}
+
+func (this *BaseController) callFunc(method string, param interface{}) {
+	if val, err := funcs.Call(method, param); err != nil || len(val) == 0 {
+		logs.Error("Call %s: %s %v", method, param, err)
 		this.Fail(CodeBadParam, fmt.Sprintf("bad param: %v", err.Error()))
 	} else {
 		ret := val[0]
 		logs.Info(ret.Kind(), ret)
-		logs.Info("call %s: %s: %v %v", method, id, val, ret)
+		logs.Info("call %s: %s: %v %v", method, param, val, ret)
 		if !ret.IsNil() {
 			switch ret.Kind() {
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
@@ -170,7 +157,6 @@ func (this *BaseController) Reflect() {
 		}
 		this.Success("ok", "")
 	}
-
 }
 
 func (this *BaseController) Upload() {
