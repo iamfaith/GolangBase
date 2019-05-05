@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 )
@@ -31,11 +32,12 @@ func (l *Link) InsertLink() int64 {
 }
 
 func FindLinkByUid(uid string) (*Link, error) {
-	var link Link
+	//link := Link{UploadFile:UploadFile{Status:"aaa", FilePath:"bb"}}
+	link := Link{}
 	o := orm.NewOrm()
 	o.Using(DbName)
-	sql := "SELECT * from ? WHERE uid=?"
-	_, err := o.Raw(sql, LinkTbl, uid).QueryRows(&link)
+	sql := fmt.Sprintf("SELECT * from %s WHERE uid=?", LinkTbl)
+	err := o.Raw(sql, uid).QueryRow(&link)
 	if err != nil {
 		logs.Error(err)
 		return nil, err

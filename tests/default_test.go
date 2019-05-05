@@ -1,6 +1,8 @@
 package tests
 
 import (
+	_ "GolangBase/init_config"
+	"GolangBase/model"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -28,4 +30,8 @@ func TestUser(t *testing.T) {
 	json.Unmarshal([]byte("[0,1]"), &nums)
 	fmt.Print(nums)
 	//redis_cluster.SetValue("d", ret, -1)
+}
+
+func TestMysql(t *testing.T) {
+	fmt.Println(model.FindLinkByUid("11"))
 }

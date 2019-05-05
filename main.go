@@ -1,6 +1,7 @@
 package main
 
 import (
+	//_ "GolangBase/init_config"
 	_ "GolangBase/routers"
 	"GolangBase/util"
 	"github.com/astaxie/beego"

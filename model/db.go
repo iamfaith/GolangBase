@@ -22,12 +22,11 @@ func init() {
 
 	hostUrl := fmt.Sprintf("tcp(%s:%s)", mysqlHost, mysqlPort)
 	if len(hostUrl) < 10 {
-		fmt.Println("welfare_game:init:mysql env lost")
+		fmt.Println("GolangBase:init:mysql env lost")
 		os.Exit(0)
 	}
 	DriveUrl := fmt.Sprintf("%s:%s@%s/%s?charset=utf8", mysqlUser, mysqlPWD, hostUrl, DbName)
 	beego.Debug(DriveUrl)
 	orm.RegisterDataBase("default", "mysql", DriveUrl, MaxIdleConn, MaxOpenConn)
 	orm.RegisterDataBase(DbName, "mysql", DriveUrl, MaxIdleConn, MaxOpenConn)
-
 }

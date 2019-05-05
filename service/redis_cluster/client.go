@@ -23,19 +23,21 @@ var (
 )
 
 func init() {
-	addrs := os.Getenv("REDIS_CLUSTER")
-	logs.Debug("redis cluster from env:" + addrs)
-	if len(addrs) == 0 {
-		addrs = beego.AppConfig.String(REDIS_CLUSTER_URL)
-		logs.Debug("redis cluster from conf:" + addrs)
+	go (func() {
+		addrs := os.Getenv("REDIS_CLUSTER")
+		logs.Debug("redis cluster from env:" + addrs)
 		if len(addrs) == 0 {
-			logs.Debug("init: REDIS_CLUSTER env lost:" + addrs)
-			os.Exit(0)
+			addrs = beego.AppConfig.String(REDIS_CLUSTER_URL)
+			logs.Debug("redis cluster from conf:" + addrs)
+			if len(addrs) == 0 {
+				logs.Debug("init: REDIS_CLUSTER env lost:" + addrs)
+				os.Exit(0)
+			}
 		}
-	}
-	urls := strings.Split(addrs, ",")
-	logs.Debug("urls", urls)
-	client = newClient(urls)
+		urls := strings.Split(addrs, ",")
+		logs.Debug("urls", urls)
+		client = newClient(urls)
+	})()
 }
 
 //添加到链表头部

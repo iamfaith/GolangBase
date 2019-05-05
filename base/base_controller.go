@@ -102,38 +102,72 @@ func (this *BaseController) Reflect() {
 		this.Fail(CodeBadParam, fmt.Sprintf("bad param: %v", err.Error()))
 	} else {
 		ret := val[0]
-		logs.Info(ret.Kind())
-		switch ret.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			result := strconv.FormatInt(ret.Int(), 10)
-			this.Success("ok", result)
-		case reflect.String:
-			result := ret.String()
-			if len(result) > 0 && result[0] == '[' && result[len(result)-1] == ']' {
-				if strings.Contains(result, "\"") {
-					var arrObj []map[string]interface{}
-					json.Unmarshal([]byte(result), &arrObj)
-					this.Success("ok", arrObj)
-				} else {
-					var arr []int
-					json.Unmarshal([]byte(result), &arr)
-					this.Success("ok", arr)
+		logs.Info(ret.Kind(), ret)
+		logs.Info("call %s: %s: %v %v", method, id, val, ret)
+		if !ret.IsNil() {
+			switch ret.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				result := strconv.FormatInt(ret.Int(), 10)
+				this.Success("ok", result)
+			case reflect.String:
+				result := ret.String()
+				if len(result) > 0 && result[0] == '[' && result[len(result)-1] == ']' {
+					if strings.Contains(result, "\"") {
+						var arrObj []map[string]interface{}
+						json.Unmarshal([]byte(result), &arrObj)
+						this.Success("ok", arrObj)
+					} else {
+						var arr []int
+						json.Unmarshal([]byte(result), &arr)
+						this.Success("ok", arr)
+					}
+				} else if len(result) > 0 && result[0] == '{' && result[len(result)-1] == '}' {
+					var retObj map[string]interface{}
+					json.Unmarshal([]byte(result), &retObj)
+					this.Success("ok", retObj)
 				}
-			} else if len(result) > 0 && result[0] == '{' && result[len(result)-1] == '}' {
-				var retObj map[string]interface{}
-				json.Unmarshal([]byte(result), &retObj)
-				this.Success("ok", retObj)
+				this.Success("ok", result)
+			case reflect.Slice:
+				count := ret.Len()
+				var arrays []string
+				for i := 0; i < count; i++ {
+					arrays = append(arrays, ret.Index(i).String())
+				}
+				this.Success("ok", arrays)
+			case reflect.Ptr:
+				fields := ret.Elem()
+				if fields.IsValid() {
+					m := make(map[string]interface{})
+					for i := 0; i < fields.NumField(); i++ {
+						valueField := fields.Field(i)
+						typeField := fields.Type().Field(i)
+						if valueField.Kind() == reflect.Interface && !valueField.IsNil() {
+							elm := valueField.Elem()
+							if elm.Kind() == reflect.Ptr && !elm.IsNil() && elm.Elem().Kind() == reflect.Ptr {
+								valueField = elm
+							}
+						}
+						if valueField.Kind() == reflect.Ptr {
+							valueField = valueField.Elem()
+
+						}
+						//address:= "not-addressable"
+						//if valueField.CanAddr() {
+						//	address = fmt.Sprintf("0x%X", valueField.Addr().Pointer())
+						//}
+						//
+						//fmt.Printf("Field Name: %s,\t Field Value: %v,\t Address: %v\t, Field type: %v\t, Field kind: %v\n", typeField.Name,
+						//	valueField.Interface(), address, typeField.Type, valueField.Kind())
+						m[strings.ToLower(typeField.Name)] = valueField.Interface()
+
+						//if valueField.Kind() == reflect.Struct {
+						//	logs.Info("struct")
+						//}
+					}
+					this.Success("ok", m)
+				}
 			}
-			this.Success("ok", result)
-		case reflect.Slice:
-			count := ret.Len()
-			var arrays []string
-			for i := 0; i < count; i++ {
-				arrays = append(arrays, ret.Index(i).String())
-			}
-			this.Success("ok", arrays)
 		}
-		logs.Info("call %s: %s: %v %v %v", method, id, val, ret)
 		this.Success("ok", "")
 	}
 
