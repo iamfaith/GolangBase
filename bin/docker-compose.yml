@@ -28,8 +28,6 @@ services:
     ports:
       - 3309:3306
     container_name: "$MYSQL_HOST"
-    env_file:
-      - ../conf/app.env
 
   redis_cluster:
     image: xianzixiang/redis-cluster:3.2.12
