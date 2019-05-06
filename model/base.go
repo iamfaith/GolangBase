@@ -68,10 +68,11 @@ func Insert(t interface{}) (int64, error) {
 
 func GetAll(kv interface{}) (interface{}, error) {
 	val := reflect.ValueOf(kv)
+	if val.Kind() != reflect.Struct || !val.IsValid() {
+		return nil, errors.New("param error")
+	}
 	if val.NumField() != 2 {
 		return nil, errors.New("must be key value")
-	} else if val.Kind() == reflect.Ptr || !val.IsValid() {
-		return nil, errors.New("param error")
 	}
 	o := orm.NewOrm()
 	o.Using(DbName)

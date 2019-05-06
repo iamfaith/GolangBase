@@ -37,11 +37,25 @@ const (
 )
 
 var funcs = util.NewFuncs(2)
+var typeRegistry = make(map[string]reflect.Type)
 
 func init() {
 	funcs.Bind("ListAll", redis_cluster.ListAll)
 	funcs.Bind("GetValue", redis_cluster.GetValue)
 	funcs.Bind("FindLinkByUid", model.FindLinkByUid)
+	funcs.Bind("GetAll", model.GetAll)
+
+	typeRegistry["Link"] = reflect.TypeOf(model.Link{})
+}
+
+func makeInstance(name string) interface{} {
+	reflectT := typeRegistry[name]
+	if reflectT == nil {
+		return nil
+	}
+	v := reflect.New(reflectT).Elem()
+	// Maybe fill in fields here if necessary
+	return v.Interface()
 }
 
 func NewFailResponse(code int, msg string) *Response {
@@ -76,8 +90,17 @@ func (this *BaseController) Success(msg string, data interface{}) {
 func (this *BaseController) Reflect() {
 	method := this.Ctx.Input.Param(":method")
 	id := this.Ctx.Input.Param(":id")
+	t := this.GetString("t")
 	if strings.Contains(id, "*") {
 		this.Fail(CodeBadParam, "bad param")
+	}
+	if t == "all" {
+		if reflectType := makeInstance(id); reflectType == nil {
+			this.Fail(CodeBadParam, "param error")
+		} else {
+			this.callFunc(method, reflectType)
+		}
+
 	}
 	this.callFunc(method, id)
 
@@ -153,6 +176,8 @@ func (this *BaseController) callFunc(method string, param interface{}) {
 					}
 					this.Success("ok", m)
 				}
+			case reflect.Interface:
+				this.Success("ok", ret.Elem().Interface())
 			}
 		}
 		this.Success("ok", "")
