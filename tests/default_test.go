@@ -3,8 +3,10 @@ package tests
 import (
 	_ "GolangBase/init_config"
 	"GolangBase/model"
+	"GolangBase/service/redis_cluster"
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -43,4 +45,6 @@ func TestMysql(t *testing.T) {
 	fmt.Println(model.InsertM(m))
 	fmt.Println(model.GetAll(model.Link{}))
 
+	ty := reflect.TypeOf(redis_cluster.SetValue)
+	fmt.Println(ty, ty.In(0))
 }

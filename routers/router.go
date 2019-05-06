@@ -5,6 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/plugins/cors"
+	"io/ioutil"
 )
 
 func init() {
@@ -15,6 +16,15 @@ func init() {
 
 	beego.Get("/alive", func(ctx *context.Context) {
 		ctx.Output.Body([]byte("ok"))
+	})
+
+	beego.Get("/build", func(ctx *context.Context) {
+		files, _ := ioutil.ReadDir("/data/build_time")
+		names := ""
+		for _, f := range files {
+			names += f.Name()
+		}
+		ctx.Output.Body([]byte(names))
 	})
 
 	fileRouter := beego.NewNamespace("/v1",
