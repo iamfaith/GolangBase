@@ -1,6 +1,7 @@
 package base
 
 import (
+	"GolangBase/define"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 )
@@ -8,25 +9,13 @@ import (
 type CallBackResult map[string]interface{}
 type CallBack func(*context.Context, CallBackResult)
 
-type AuthStatus int
-
-const (
-	AuthErr          AuthStatus = iota
-	AuthNoLogin
-	AuthNoUser
-	AuthNoPerm
-	AuthHasReadPerm
-	AuthHasWritePerm
-	AuthSuccess
-)
-
 func auth(ctx *context.Context, args ...interface{}) CallBackResult {
 	name := ctx.Request.URL.Query().Get("uname")
 	var ret = make(CallBackResult)
 	if name == "" {
 		name = ctx.Input.Cookie("uname")
 		if name == "" {
-			ret[Status.String()] = AuthNoLogin
+			ret[define.Status.String()] = define.AuthNoLogin
 		}
 	}
 	return ret

@@ -2,6 +2,7 @@ package routers
 
 import (
 	"GolangBase/base"
+	"GolangBase/define"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/plugins/cors"
@@ -35,8 +36,8 @@ func init() {
 	beego.AddNamespace(fileRouter)
 
 	cb := func(ctx *context.Context, ret base.CallBackResult) {
-		switch ret[base.Status.String()] {
-		case base.AuthNoLogin:
+		switch ret[define.Status.String()] {
+		case define.AuthNoLogin:
 			beego.Debug("should redirect to login")
 			ctx.Redirect(303, "http://www.faithio.cn")
 			return

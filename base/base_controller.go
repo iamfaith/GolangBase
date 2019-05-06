@@ -1,6 +1,7 @@
 package base
 
 import (
+	"GolangBase/define"
 	"GolangBase/model"
 	"GolangBase/service/redis_cluster"
 	"GolangBase/util"
@@ -25,16 +26,6 @@ type Response struct {
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
-
-const (
-	CodeOk        = 0
-	CodeBadParam  = -1
-	CodeServerErr = -2
-)
-
-const (
-	UploadFile = "upload_file"
-)
 
 var funcs = util.NewFuncs(2)
 var typeRegistry = make(map[string]reflect.Type)
@@ -68,7 +59,7 @@ func NewFailResponse(code int, msg string) *Response {
 
 func NewSuccessReponse(msg string, data interface{}) *Response {
 	return &Response{
-		Code: CodeOk,
+		Code: define.CodeOk,
 		Msg:  msg,
 		Data: data,
 	}
@@ -93,7 +84,7 @@ func (this *BaseController) PostByReflect() {
 	var m map[string]interface{}
 	if err := json.Unmarshal(this.Ctx.Input.RequestBody, &m); err != nil {
 		logs.Error(err)
-		this.Fail(CodeBadParam, "param error")
+		this.Fail(define.CodeBadParam, "param error")
 	}
 	this.callFunc(method, m)
 }
@@ -103,11 +94,11 @@ func (this *BaseController) GetByReflect() {
 	id := this.Ctx.Input.Param(":id")
 	t := this.GetString("t")
 	if strings.Contains(id, "*") {
-		this.Fail(CodeBadParam, "bad param")
+		this.Fail(define.CodeBadParam, "bad param")
 	}
 	if t == "all" {
 		if reflectType := makeInstance(id); reflectType == nil {
-			this.Fail(CodeBadParam, "param error")
+			this.Fail(define.CodeBadParam, "param error")
 		} else {
 			this.callFunc(method, reflectType)
 		}
@@ -120,7 +111,7 @@ func (this *BaseController) GetByReflect() {
 func (this *BaseController) callFunc(method string, param interface{}) {
 	if val, err := funcs.Call(method, param); err != nil || len(val) == 0 {
 		logs.Error("Call %s: %s %v", method, param, err)
-		this.Fail(CodeBadParam, fmt.Sprintf("bad param: %v", err.Error()))
+		this.Fail(define.CodeBadParam, fmt.Sprintf("bad param: %v", err.Error()))
 	} else {
 		ret := val[0]
 		logs.Info(ret.Kind(), ret)
@@ -217,10 +208,10 @@ func (this *BaseController) handleReflectMap(ret reflect.Value) {
 func (this *BaseController) Upload() {
 	if f, h, err := this.GetFile("file"); err != nil {
 		logs.Error(err)
-		this.Fail(CodeBadParam, err.Error())
+		this.Fail(define.CodeBadParam, err.Error())
 	} else {
 		if f == nil {
-			this.Fail(CodeBadParam, "file is null")
+			this.Fail(define.CodeBadParam, "file is null")
 		} else {
 			fileName := h.Filename
 			path := beego.AppConfig.String("upload_path")
@@ -240,13 +231,13 @@ func (this *BaseController) Upload() {
 			if !utils.FileExists(path) {
 				this.SaveToFile("file", path)
 			}
-			fileObj, _ := json.Marshal(model.UploadFile{Status: NotProcess.String(), FilePath: path})
+			fileObj, _ := json.Marshal(model.UploadFile{Status: define.NotProcess.String(), FilePath: path})
 
-			if err := redis_cluster.SetExValue(UploadFile+sha1, string(fileObj), 600); err != nil {
+			if err := redis_cluster.SetValue(define.UploadFile+sha1, string(fileObj), -1); err != nil {
 				logs.Error(sha1, path, err)
-				this.Fail(CodeBadParam, err.Error())
+				this.Fail(define.CodeBadParam, err.Error())
 			} else {
-				redis_cluster.LPush(UploadFile, sha1)
+				redis_cluster.LPush(define.UploadFile, sha1)
 				this.Success("ok", sha1)
 			}
 		}

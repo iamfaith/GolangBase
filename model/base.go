@@ -1,6 +1,7 @@
 package model
 
 import (
+	"GolangBase/define"
 	"errors"
 	"fmt"
 	"github.com/astaxie/beego/logs"
@@ -24,10 +25,6 @@ type Kv struct {
 	Value     string
 	TableName string
 }
-
-const (
-	LinkTbl = "link"
-)
 
 func (l *Link) InsertLink() int64 {
 	o := orm.NewOrm()
@@ -88,7 +85,7 @@ func Insert(t interface{}) (int64, error) {
 		}
 		pval[i] = val.Field(i).Interface()
 	}
-	sql := fmt.Sprintf("insert into %s (%s) values (?, ?)", LinkTbl, param)
+	sql := fmt.Sprintf("insert into %s (%s) values (?, ?)", define.LinkTbl, param)
 	result, err := o.Raw(sql, pval).Exec()
 	if err != nil {
 		logs.Error(err)
@@ -141,7 +138,7 @@ func FindLinkByUid(uid string) (*Link, error) {
 	link := Link{}
 	o := orm.NewOrm()
 	o.Using(DbName)
-	sql := fmt.Sprintf("SELECT * from %s WHERE uid=?", LinkTbl)
+	sql := fmt.Sprintf("SELECT * from %s WHERE uid=?", define.LinkTbl)
 	err := o.Raw(sql, uid).QueryRow(&link)
 	if err != nil {
 		logs.Error(err)

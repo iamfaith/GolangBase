@@ -1,4 +1,4 @@
-package base
+package define
 
 type EnumType int
 
