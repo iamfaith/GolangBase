@@ -2,9 +2,7 @@ package redis_cluster
 
 import (
 	"errors"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
-
+	"fmt"
 	// v5 有连接问题
 	// "gopkg.in/redis.v5"
 	"github.com/go-redis/redis"
@@ -25,17 +23,13 @@ var (
 func init() {
 	go (func() {
 		addrs := os.Getenv("REDIS_CLUSTER")
-		logs.Debug("redis cluster from env:" + addrs)
+		fmt.Println("redis cluster from env:" + addrs)
 		if len(addrs) == 0 {
-			addrs = beego.AppConfig.String(REDIS_CLUSTER_URL)
-			logs.Debug("redis cluster from conf:" + addrs)
-			if len(addrs) == 0 {
-				logs.Debug("init: REDIS_CLUSTER env lost:" + addrs)
-				os.Exit(0)
-			}
+			fmt.Println("init: REDIS_CLUSTER env lost:" + addrs)
+			os.Exit(0)
 		}
 		urls := strings.Split(addrs, ",")
-		logs.Debug("urls", urls)
+		fmt.Println("urls", urls)
 		client = newClient(urls)
 	})()
 }
@@ -314,7 +308,7 @@ func newClient(addrs []string) *redis.ClusterClient {
 
 	cmd := client.Ping()
 	if cmd.Err() != nil {
-		logs.Error("redis cluster err:", cmd.Err())
+		fmt.Println("redis cluster err:", cmd.Err())
 		os.Exit(-1)
 	}
 
