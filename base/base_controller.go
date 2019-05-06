@@ -44,6 +44,7 @@ func init() {
 	funcs.Bind("GetValue", redis_cluster.GetValue)
 	funcs.Bind("FindLinkByUid", model.FindLinkByUid)
 	funcs.Bind("GetAll", model.GetAll)
+	funcs.Bind("Insert", model.InsertM)
 
 	typeRegistry["Link"] = reflect.TypeOf(model.Link{})
 }
@@ -87,7 +88,17 @@ func (this *BaseController) Success(msg string, data interface{}) {
 	this.StopRun()
 }
 
-func (this *BaseController) Reflect() {
+func (this *BaseController) PostByReflect() {
+	method := this.Ctx.Input.Param(":method")
+	var m map[string]interface{}
+	if err := json.Unmarshal(this.Ctx.Input.RequestBody, &m); err != nil {
+		logs.Error(err)
+		this.Fail(CodeBadParam, "param error")
+	}
+	this.callFunc(method, m)
+}
+
+func (this *BaseController) GetByReflect() {
 	method := this.Ctx.Input.Param(":method")
 	id := this.Ctx.Input.Param(":id")
 	t := this.GetString("t")
@@ -114,7 +125,7 @@ func (this *BaseController) callFunc(method string, param interface{}) {
 		ret := val[0]
 		logs.Info(ret.Kind(), ret)
 		logs.Info("call %s: %s: %v %v", method, param, val, ret)
-		if !ret.IsNil() {
+		if ret.IsValid() {
 			switch ret.Kind() {
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 				result := strconv.FormatInt(ret.Int(), 10)
@@ -145,42 +156,61 @@ func (this *BaseController) callFunc(method string, param interface{}) {
 				}
 				this.Success("ok", arrays)
 			case reflect.Ptr:
-				fields := ret.Elem()
-				if fields.IsValid() {
-					m := make(map[string]interface{})
-					for i := 0; i < fields.NumField(); i++ {
-						valueField := fields.Field(i)
-						typeField := fields.Type().Field(i)
-						if valueField.Kind() == reflect.Interface && !valueField.IsNil() {
-							elm := valueField.Elem()
-							if elm.Kind() == reflect.Ptr && !elm.IsNil() && elm.Elem().Kind() == reflect.Ptr {
-								valueField = elm
+				if !ret.IsNil() {
+					fields := ret.Elem()
+					if !fields.IsNil() {
+						if fields.Kind() == reflect.Map {
+							this.handleReflectMap(fields)
+						} else {
+							logs.Info(fields.Kind())
+						}
+						m := make(map[string]interface{})
+						for i := 0; i < fields.NumField(); i++ {
+							valueField := fields.Field(i)
+							typeField := fields.Type().Field(i)
+							if valueField.Kind() == reflect.Interface && !valueField.IsNil() {
+								elm := valueField.Elem()
+								if elm.Kind() == reflect.Ptr && !elm.IsNil() && elm.Elem().Kind() == reflect.Ptr {
+									valueField = elm
+								}
 							}
-						}
-						if valueField.Kind() == reflect.Ptr {
-							valueField = valueField.Elem()
+							if valueField.Kind() == reflect.Ptr {
+								valueField = valueField.Elem()
 
+							}
+							m[strings.ToLower(typeField.Name)] = valueField.Interface()
+							//address:= "not-addressable"
+							//if valueField.CanAddr() {
+							//	address = fmt.Sprintf("0x%X", valueField.Addr().Pointer())
+							//}
+							//fmt.Printf("Field Name: %s,\t Field Value: %v,\t Address: %v\t, Field type: %v\t, Field kind: %v\n", typeField.Name,
+							//	valueField.Interface(), address, typeField.Type, valueField.Kind())
+							//if valueField.Kind() == reflect.Struct {
+							//}
 						}
-						//address:= "not-addressable"
-						//if valueField.CanAddr() {
-						//	address = fmt.Sprintf("0x%X", valueField.Addr().Pointer())
-						//}
-						//
-						//fmt.Printf("Field Name: %s,\t Field Value: %v,\t Address: %v\t, Field type: %v\t, Field kind: %v\n", typeField.Name,
-						//	valueField.Interface(), address, typeField.Type, valueField.Kind())
-						m[strings.ToLower(typeField.Name)] = valueField.Interface()
-
-						//if valueField.Kind() == reflect.Struct {
-						//	logs.Info("struct")
-						//}
+						this.Success("ok", m)
 					}
-					this.Success("ok", m)
 				}
 			case reflect.Interface:
-				this.Success("ok", ret.Elem().Interface())
+				if !ret.IsNil() {
+					this.Success("ok", ret.Elem().Interface())
+				}
+			case reflect.Map:
+				this.handleReflectMap(ret)
 			}
 		}
 		this.Success("ok", "")
+	}
+}
+
+func (this *BaseController) handleReflectMap(ret reflect.Value) {
+	if !ret.IsNil() {
+		m := make(map[string]interface{})
+		for _, key := range ret.MapKeys() {
+			v := ret.MapIndex(key)
+			m[key.String()] = v.Interface()
+		}
+		this.Success("ok", m)
 	}
 }
 

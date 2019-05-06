@@ -33,9 +33,14 @@ func TestUser(t *testing.T) {
 }
 
 func TestMysql(t *testing.T) {
-	fmt.Println(model.GetAllByKv(model.Kv{Key: "uid", Value: "content", TableName: model.LinkTbl}))
+	//fmt.Println(model.GetAllByKv(model.Kv{Key: "uid", Value: "content", TableName: model.LinkTbl}))
 	//fmt.Println(model.Insert(model.Link{Uid: "70", Content: "aa"}))
 	//fmt.Println(unsafe.Sizeof(model.Link{}))
+	m := make(map[string]interface{})
+	m["uid"] = "99"
+	m["Content"] = "11"
+	m["tbl"] = "link"
+	fmt.Println(model.InsertM(m))
 	fmt.Println(model.GetAll(model.Link{}))
 
 }

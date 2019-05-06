@@ -40,6 +40,39 @@ func (l *Link) InsertLink() int64 {
 	return id
 }
 
+func InsertM(m map[string]interface{}) (int64, error) {
+	tbl, ok := m["tbl"]
+	if !ok {
+		return 0, errors.New("param error")
+	} else {
+		delete(m, "tbl")
+	}
+	o := orm.NewOrm()
+	o.Using(DbName)
+	param := ""
+	count := len(m)
+	i := 0
+	pval := make([]interface{}, count)
+	for k, v := range m {
+		if i == count-1 {
+			param += fmt.Sprintf("%s", strings.ToLower(k))
+		} else {
+			param += fmt.Sprintf("%s, ", strings.ToLower(k))
+		}
+		pval[i] = v
+		i++
+	}
+	sql := fmt.Sprintf("insert into %s (%s) values (?, ?)", tbl, param)
+	result, err := o.Raw(sql, pval).Exec()
+	if err != nil {
+		logs.Error(err)
+		return 0, err
+	} else {
+		num, _ := result.RowsAffected()
+		return num, nil
+	}
+}
+
 func Insert(t interface{}) (int64, error) {
 	o := orm.NewOrm()
 	o.Using(DbName)

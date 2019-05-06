@@ -19,7 +19,8 @@ func init() {
 
 	fileRouter := beego.NewNamespace("/v1",
 		beego.NSRouter("/file", &base.BaseController{}, "POST:Upload"),
-		beego.NSRouter("/?:method/?:id", &base.BaseController{}, "GET:Reflect"),
+		beego.NSRouter("/?:method/?:id", &base.BaseController{}, "GET:GetByReflect"),
+		beego.NSRouter("/?:method", &base.BaseController{}, "POST:PostByReflect"),
 	)
 	beego.AddNamespace(fileRouter)
 

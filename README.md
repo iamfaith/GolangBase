@@ -20,7 +20,7 @@ run godep save ./... first
 echo aa >> test.txt && curl 127.0.0.1:8004/v1/file?uname=1 -X POST -F "file=@test.txt"
 curl faithio.cn:8004/v1/file -X POST -F "file=@test.txt"
 
-## reflect interface
+## get reflect interface
 
 ```
 
@@ -32,6 +32,13 @@ curl faithio.cn:8004/v1/file -X POST -F "file=@test.txt"
 
  curl "127.0.0.1:8004/v1/GetAll/Link?uname=1&t=all"
 
+
+```
+
+## post reflect interface
+
+```
+  curl "127.0.0.1:8004/v1/Insert?uname=1" -X POST -d '{"uid": "curl", "content":"faith", "tbl": "link"}'
 
 ```
 
