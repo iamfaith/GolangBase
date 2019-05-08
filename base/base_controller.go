@@ -149,38 +149,36 @@ func (this *BaseController) callFunc(method string, param interface{}) {
 			case reflect.Ptr:
 				if !ret.IsNil() {
 					fields := ret.Elem()
-					if !fields.IsNil() {
-						if fields.Kind() == reflect.Map {
-							this.handleReflectMap(fields)
-						} else {
-							logs.Info(fields.Kind())
-						}
-						m := make(map[string]interface{})
-						for i := 0; i < fields.NumField(); i++ {
-							valueField := fields.Field(i)
-							typeField := fields.Type().Field(i)
-							if valueField.Kind() == reflect.Interface && !valueField.IsNil() {
-								elm := valueField.Elem()
-								if elm.Kind() == reflect.Ptr && !elm.IsNil() && elm.Elem().Kind() == reflect.Ptr {
-									valueField = elm
-								}
-							}
-							if valueField.Kind() == reflect.Ptr {
-								valueField = valueField.Elem()
-
-							}
-							m[strings.ToLower(typeField.Name)] = valueField.Interface()
-							//address:= "not-addressable"
-							//if valueField.CanAddr() {
-							//	address = fmt.Sprintf("0x%X", valueField.Addr().Pointer())
-							//}
-							//fmt.Printf("Field Name: %s,\t Field Value: %v,\t Address: %v\t, Field type: %v\t, Field kind: %v\n", typeField.Name,
-							//	valueField.Interface(), address, typeField.Type, valueField.Kind())
-							//if valueField.Kind() == reflect.Struct {
-							//}
-						}
-						this.Success("ok", m)
+					if fields.Kind() == reflect.Map {
+						this.handleReflectMap(fields)
+					} else {
+						logs.Info(fields.Kind())
 					}
+					m := make(map[string]interface{})
+					for i := 0; i < fields.NumField(); i++ {
+						valueField := fields.Field(i)
+						typeField := fields.Type().Field(i)
+						if valueField.Kind() == reflect.Interface && !valueField.IsNil() {
+							elm := valueField.Elem()
+							if elm.Kind() == reflect.Ptr && !elm.IsNil() && elm.Elem().Kind() == reflect.Ptr {
+								valueField = elm
+							}
+						}
+						if valueField.Kind() == reflect.Ptr {
+							valueField = valueField.Elem()
+
+						}
+						m[strings.ToLower(typeField.Name)] = valueField.Interface()
+						//address:= "not-addressable"
+						//if valueField.CanAddr() {
+						//	address = fmt.Sprintf("0x%X", valueField.Addr().Pointer())
+						//}
+						//fmt.Printf("Field Name: %s,\t Field Value: %v,\t Address: %v\t, Field type: %v\t, Field kind: %v\n", typeField.Name,
+						//	valueField.Interface(), address, typeField.Type, valueField.Kind())
+						//if valueField.Kind() == reflect.Struct {
+						//}
+					}
+					this.Success("ok", m)
 				}
 			case reflect.Interface:
 				if !ret.IsNil() {

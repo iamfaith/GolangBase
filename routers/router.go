@@ -3,6 +3,7 @@ package routers
 import (
 	"GolangBase/base"
 	"GolangBase/define"
+	"GolangBase/service/pprof"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/plugins/cors"
@@ -28,10 +29,12 @@ func init() {
 		ctx.Output.Body([]byte(names))
 	})
 
-	fileRouter := beego.NewNamespace("/v1",
-		beego.NSRouter("/file", &base.BaseController{}, "POST:Upload"),
-		beego.NSRouter("/?:method/?:id", &base.BaseController{}, "GET:GetByReflect"),
-		beego.NSRouter("/?:method", &base.BaseController{}, "POST:PostByReflect"),
+	fileRouter := beego.NewNamespace("/api",
+		beego.NSNamespace("/v1",
+			beego.NSRouter("/file", &base.BaseController{}, "POST:Upload"),
+			beego.NSRouter("/?:method/?:id", &base.BaseController{}, "GET:GetByReflect"),
+			beego.NSRouter("/?:method", &base.BaseController{}, "POST:PostByReflect"),
+		),
 	)
 	beego.AddNamespace(fileRouter)
 
@@ -50,6 +53,7 @@ func init() {
 		AllowHeaders:  []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders: []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
-	beego.InsertFilter("*", beego.BeforeRouter, base.Filter(cb))
+	beego.InsertFilter("/api/*", beego.BeforeRouter, base.Filter(cb))
 
+	pprof.Monitor()
 }

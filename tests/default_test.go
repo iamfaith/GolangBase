@@ -1,9 +1,7 @@
 package tests
 
 import (
-	"GolangBase/define"
 	_ "GolangBase/init_config"
-	"GolangBase/service/redis_cluster"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -34,38 +32,29 @@ func TestUser(t *testing.T) {
 	//redis_cluster.SetValue("d", ret, -1)
 }
 
-func TestMysql(t *testing.T) {
-	//fmt.Println(model.GetAllByKv(model.Kv{Key: "uid", Value: "content", TableName: model.LinkTbl}))
-	//fmt.Println(model.Insert(model.Link{Uid: "70", Content: "aa"}))
-	//fmt.Println(unsafe.Sizeof(model.Link{}))
-	//m := make(map[string]interface{})
-	//m["uid"] = "99"
-	//m["Content"] = "11"
-	//m["tbl"] = "link"
-	//fmt.Println(model.InsertM(m))
-	//fmt.Println(model.GetAll(model.Link{}))
-	//
-	//ty := reflect.TypeOf(redis_cluster.SetValue)
-	//fmt.Println(ty, ty.In(0))
-
-	time.Sleep(1 * time.Second)
-	err := redis_cluster.LPush(define.UploadFile, "1111")
-	fmt.Println(err)
-	err = redis_cluster.LPush(define.UploadFile, "2222")
-	fmt.Println(err)
-	err = redis_cluster.LPush(define.UploadFile, "3333")
-	fmt.Println(err)
-	go ConsumeRedisTask()
-	time.Sleep(1000 * time.Second)
+func worker(id int, jobs <-chan int, results chan<- int) {
+	for j := range jobs {
+		fmt.Println("worker", id, "started  job", j)
+		time.Sleep(time.Second)
+		fmt.Println("worker", id, "finished job", j)
+		results <- j * 2
+	}
 }
 
-func ConsumeRedisTask() {
-	for true {
-		if ret, err := redis_cluster.RPop(define.UploadFile); err != nil {
-			fmt.Println(ret)
-		} else {
-			fmt.Println("wait...")
-			time.Sleep(100 * time.Millisecond)
-		}
+func TestMysql(t *testing.T) {
+	jobs := make(chan int, 100)
+	results := make(chan int, 100)
+
+	for w := 1; w <= 3; w++ {
+		go worker(w, jobs, results)
+	}
+
+	for j := 1; j <= 5; j++ {
+		jobs <- j
+	}
+	close(jobs)
+
+	for a := 1; a <= 5; a++ {
+		<-results
 	}
 }
