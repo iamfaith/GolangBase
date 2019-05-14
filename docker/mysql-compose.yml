@@ -3,7 +3,7 @@ services:
   mysql:
     build:
       context: .
-      dockerfile: ./docker/mysql.Dockerfile
+      dockerfile: ./mysql.Dockerfile
     volumes:
     - ./mysql/conf:/etc/mysql/conf.d
     - ./mysql/logs:/logs

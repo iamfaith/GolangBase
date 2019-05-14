@@ -5,7 +5,7 @@ services:
     volumes:
       - ../app_data:/data
     depends_on:
-      - "mysql"
+#      - "mysql"
       - "redis_cluster"
     stdin_open: true
     tty: true
@@ -17,17 +17,17 @@ services:
     entrypoint: ["/bin/bash", "-c",
       "/bin/bash $${PROJECT_PATH}/docker/wait_deps.sh /bin/sh $${PROJECT_PATH}/docker/start.sh"]
 
-  mysql:
-    image: xianzixiang/mysql
-    volumes:
-      - ../mysql/conf:/etc/mysql/conf.d
-      - ../mysql/logs:/logs
-      - ../mysql/data:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=$MYSQL_PWD
-    ports:
-      - 3309:3306
-    container_name: "$MYSQL_HOST"
+#  mysql:
+#    image: xianzixiang/mysql
+#    volumes:
+#      - ../mysql/conf:/etc/mysql/conf.d
+#      - ../mysql/logs:/logs
+#      - ../mysql/data:/var/lib/mysql
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=$MYSQL_PWD
+#    ports:
+#      - 3309:3306
+#    container_name: "$MYSQL_HOST"
 
   redis_cluster:
     image: xianzixiang/redis-cluster:3.2.12
@@ -41,3 +41,10 @@ services:
       STANDALONE: 'false'
     ports:
       - 7000:7000
+
+
+## added by faith: extract mysql from docker-compose
+networks:
+  default:
+    external:
+      name: mysql-network

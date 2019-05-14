@@ -3,6 +3,11 @@
 
 export $(cut -d= -f1 ../conf/app.env)
 source ../conf/app.env
+docker-compose stop
+docker system prune -f
+
+chmod +x ../docker/run-init.sh
+../docker/run-init.sh
 
 APP_IMAGE=${APP_IMG}:${APP_VERSION}
 
@@ -16,6 +21,4 @@ if [ $op != n ]; then
 fi
 
 echo running image [${APP_IMAGE}].....
-docker-compose stop
-docker system prune -f
 docker-compose up -d --build

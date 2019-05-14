@@ -9,4 +9,4 @@ eval `ssh-agent -s`
 ssh-add ~/.ssh/id_rsa
 
 
-git pull && cd bin/ && chmod +x exec.sh && ./exec.sh y
+git pull && cd docker/ && chmod +x exec.sh && ./exec.sh y
