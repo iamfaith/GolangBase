@@ -31,7 +31,7 @@ curl faithio.cn:8004/api/v1/file -X POST -F "file=@test.txt"
  curl 127.0.0.1:8004/api/v1/FindLinkByUid/11?uname=1
 
  curl "127.0.0.1:8004/api/v1/GetAll/Link?uname=1&t=all"
-
+ curl "faithio.cn:8004/api/v1/GetAll/Link?uname=1&t=all"
 
 ```
 
