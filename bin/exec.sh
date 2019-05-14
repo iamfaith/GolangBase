@@ -18,4 +18,4 @@ fi
 echo running image [${APP_IMAGE}].....
 docker-compose stop
 docker system prune -f
-docker-compose up --build &
+docker-compose up -d --build
