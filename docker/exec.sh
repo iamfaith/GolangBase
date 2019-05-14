@@ -7,7 +7,7 @@ docker-compose stop
 docker system prune -f
 
 chmod +x ../docker/run-init.sh
-../docker/run-init.sh
+../docker/run-init.sh y
 
 APP_IMAGE=${APP_IMG}:${APP_VERSION}
 
