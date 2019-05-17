@@ -48,8 +48,12 @@ curl faithio.cn:8004/api/v1/file -X POST -F "file=@test.txt"
 
 ## pprof
 
+```
+
 curl 127.0.0.1:8004/_adm/pprof/cpu?seconds=2 -H "adminKey:abcdefg" -o cpu
 
  brew install  Graphviz
 
 go tool pprof -svg heap >heap.svg
+
+```
