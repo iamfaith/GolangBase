@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export $(cut -d= -f1 ../conf/app.env)
+source ../conf/app.env
+
 if [ ! "$(docker network ls | grep mysql-network)" ]; then
   echo "Creating mysql-network network ..."
   docker network create mysql-network
